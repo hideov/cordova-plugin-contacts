@@ -170,6 +170,15 @@ Contact.prototype.save = function(successCB, errorCB) {
         }
     };
     var dupContact = convertOut(utils.clone(this));
+    // utils.clone preserve the Contact methods. This causes
+    // problems on iOS when calling exec() as methods seem not to be postable
+    // by window.webkit.messageHandlers.cordova (see cordova.js on ios)
+    // Removing this methods doesn't affect the success of the save operation
+    // on ios and android.
+    delete dupContact.clone;
+    delete dupContact.display;
+    delete dupContact.remove;
+    delete dupContact.save;
     exec(success, fail, "Contacts", "save", [dupContact]);
 };
 
